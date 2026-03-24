@@ -52,7 +52,7 @@ class PreventDuplicateOrder
     }
 
     /**
-     * Check for duplicate order before placing
+     * Check for incomplete order before placing a new one
      *
      * @param PaymentInformationManagement $subject
      * @param int $cartId
@@ -75,53 +75,59 @@ class PreventDuplicateOrder
             $quote = $this->cartRepository->getActive($cartId);
             $customerEmail = $quote->getCustomerEmail();
             $grandTotal = (float)$quote->getGrandTotal();
-            $paymentMethodCode = $paymentMethod->getMethod();
 
-            if ($this->isDuplicateOrder($customerEmail, $grandTotal, $paymentMethodCode)) {
+            $incompleteOrder = $this->findIncompleteOrder($customerEmail, $grandTotal);
+
+            if ($incompleteOrder) {
+                $incrementId = $incompleteOrder->getIncrementId();
                 $this->logger->info(
-                    'Klever_DuplicateOrderPrevention: Blocked duplicate order attempt',
+                    'Klever_DuplicateOrderPrevention: Incomplete order found, prompting customer to complete it',
                     [
                         'customer_email' => $customerEmail,
                         'grand_total' => $grandTotal,
-                        'payment_method' => $paymentMethodCode
+                        'existing_order' => $incrementId
                     ]
                 );
-                throw new LocalizedException(__($this->helper->getErrorMessage()));
+                throw new LocalizedException(
+                    __($this->helper->getErrorMessage($incrementId))
+                );
             }
         } catch (LocalizedException $e) {
             throw $e;
         } catch (\Exception $e) {
             $this->logger->error(
-                'Klever_DuplicateOrderPrevention: Error checking duplicate order',
+                'Klever_DuplicateOrderPrevention: Error checking for incomplete orders',
                 ['exception' => $e->getMessage()]
             );
         }
     }
 
     /**
-     * Check if this is a duplicate order
+     * Find an incomplete order matching the current checkout
+     *
+     * @return \Magento\Sales\Model\Order|null
      */
-    private function isDuplicateOrder(
-        ?string $customerEmail,
-        float $grandTotal,
-        ?string $paymentMethod
-    ): bool {
+    private function findIncompleteOrder(?string $customerEmail, float $grandTotal)
+    {
         if (empty($customerEmail)) {
-            return false;
+            return null;
         }
 
-        if (!$this->helper->shouldCheckCustomerEmail()
-            && !$this->helper->shouldCheckGrandTotal()
-            && !$this->helper->shouldCheckPaymentMethod()
-        ) {
-            return false;
+        if (!$this->helper->shouldCheckCustomerEmail() && !$this->helper->shouldCheckGrandTotal()) {
+            return null;
         }
 
         $timeWindow = $this->helper->getTimeWindow();
         $fromTime = date('Y-m-d H:i:s', strtotime("-{$timeWindow} minutes"));
+        $statuses = $this->helper->getOrderStatuses();
+
+        if (empty($statuses)) {
+            return null;
+        }
 
         $collection = $this->orderCollectionFactory->create();
         $collection->addFieldToFilter('created_at', ['gteq' => $fromTime]);
+        $collection->addFieldToFilter('state', ['in' => $statuses]);
 
         if ($this->helper->shouldCheckCustomerEmail()) {
             $collection->addFieldToFilter('customer_email', $customerEmail);
@@ -131,17 +137,15 @@ class PreventDuplicateOrder
             $collection->addFieldToFilter('grand_total', $grandTotal);
         }
 
-        if ($this->helper->shouldCheckPaymentMethod() && $paymentMethod) {
-            $collection->getSelect()->join(
-                ['payment' => $collection->getTable('sales_order_payment')],
-                'main_table.entity_id = payment.parent_id',
-                []
-            )->where('payment.method = ?', $paymentMethod);
+        $collection->setOrder('created_at', 'DESC');
+        $collection->setPageSize(1);
+
+        $order = $collection->getFirstItem();
+
+        if ($order && $order->getId()) {
+            return $order;
         }
 
-        // Exclude canceled orders from check (optional - you might want to include them)
-        // $collection->addFieldToFilter('state', ['neq' => \Magento\Sales\Model\Order::STATE_CANCELED]);
-
-        return $collection->getSize() > 0;
+        return null;
     }
 }

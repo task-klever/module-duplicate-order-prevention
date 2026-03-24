@@ -26,26 +26,26 @@
                 <field id="time_window" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Time Window (minutes)</label>
                     <validate>validate-number validate-greater-than-zero</validate>
-                    <comment>Time period in minutes to check for duplicate orders. Default: 30 minutes.</comment>
+                    <comment>Time period in minutes to check for incomplete orders. Default: 30 minutes.</comment>
                 </field>
-                <field id="check_payment_method" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Check Payment Method</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Include payment method in duplicate check criteria.</comment>
+                <field id="order_statuses" translate="label comment" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order Statuses to Check</label>
+                    <source_model>Klever\DuplicateOrderPrevention\Model\Config\Source\OrderStatuses</source_model>
+                    <comment>Select which order states should be considered as incomplete. Orders in these states will prompt the customer to complete them instead of placing a new order.</comment>
                 </field>
                 <field id="check_grand_total" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Check Grand Total</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Include grand total amount in duplicate check criteria.</comment>
+                    <comment>Include grand total amount when matching incomplete orders.</comment>
                 </field>
                 <field id="check_customer_email" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Check Customer Email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Include customer email in duplicate check criteria.</comment>
+                    <comment>Include customer email when matching incomplete orders.</comment>
                 </field>
                 <field id="error_message" translate="label comment" type="textarea" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Error Message</label>
-                    <comment>Custom error message shown to customers when duplicate order is detected.</comment>
+                    <label>Customer Message</label>
+                    <comment><![CDATA[Message shown when an incomplete order is found. Use <strong>%1</strong> as placeholder for the order number.]]></comment>
                 </field>
             </group>
         </section>

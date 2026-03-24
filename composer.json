@@ -2,7 +2,7 @@
     "name": "klever/module-duplicate-order-prevention",
     "description": "Prevents duplicate orders with same customer email, payment method and grand total within a configurable time window",
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "proprietary",
     "authors": [
         {

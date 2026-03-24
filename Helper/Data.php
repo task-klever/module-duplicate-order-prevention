@@ -9,16 +9,15 @@ declare(strict_types=1);
 namespace Klever\DuplicateOrderPrevention\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
     private const XML_PATH_ENABLED = 'klever_duplicate_order/general/enabled';
     private const XML_PATH_TIME_WINDOW = 'klever_duplicate_order/general/time_window';
-    private const XML_PATH_CHECK_PAYMENT_METHOD = 'klever_duplicate_order/general/check_payment_method';
     private const XML_PATH_CHECK_GRAND_TOTAL = 'klever_duplicate_order/general/check_grand_total';
     private const XML_PATH_CHECK_CUSTOMER_EMAIL = 'klever_duplicate_order/general/check_customer_email';
+    private const XML_PATH_ORDER_STATUSES = 'klever_duplicate_order/general/order_statuses';
     private const XML_PATH_ERROR_MESSAGE = 'klever_duplicate_order/general/error_message';
 
     /**
@@ -47,18 +46,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Check if payment method should be checked
-     */
-    public function shouldCheckPaymentMethod(?int $storeId = null): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            self::XML_PATH_CHECK_PAYMENT_METHOD,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-    }
-
-    /**
      * Check if grand total should be checked
      */
     public function shouldCheckGrandTotal(?int $storeId = null): bool
@@ -83,15 +70,43 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get error message
+     * Get order statuses to check for incomplete orders
      */
-    public function getErrorMessage(?int $storeId = null): string
+    public function getOrderStatuses(?int $storeId = null): array
+    {
+        $value = $this->scopeConfig->getValue(
+            self::XML_PATH_ORDER_STATUSES,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        if (empty($value)) {
+            return ['canceled', 'closed', 'payment_review', 'pending_payment'];
+        }
+
+        return explode(',', $value);
+    }
+
+    /**
+     * Get error message with order increment ID placeholder support
+     * Use %1 in the message as placeholder for order increment ID
+     */
+    public function getErrorMessage(?string $incrementId = null, ?int $storeId = null): string
     {
         $message = $this->scopeConfig->getValue(
             self::XML_PATH_ERROR_MESSAGE,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-        return $message ?: (string)__('You have already placed a similar order recently. Please wait before placing another order.');
+
+        if (empty($message)) {
+            $message = 'You have an incomplete order #%1. Please try completing it with a different payment method instead of placing a new order.';
+        }
+
+        if ($incrementId) {
+            $message = str_replace('%1', $incrementId, $message);
+        }
+
+        return $message;
     }
 }

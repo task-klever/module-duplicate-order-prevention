@@ -12,10 +12,10 @@
             <general>
                 <enabled>1</enabled>
                 <time_window>30</time_window>
-                <check_payment_method>1</check_payment_method>
                 <check_grand_total>1</check_grand_total>
                 <check_customer_email>1</check_customer_email>
-                <error_message>You have already placed a similar order recently. Please wait before placing another order or contact support if you need assistance.</error_message>
+                <order_statuses>canceled,closed,payment_review,pending_payment</order_statuses>
+                <error_message>You have an incomplete order #%1. Please try completing it with a different payment method instead of placing a new order.</error_message>
             </general>
         </klever_duplicate_order>
     </default>
