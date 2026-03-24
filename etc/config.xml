@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Klever Tech Solution
+ * Duplicate Order Prevention Module
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/config.xsd">
+    <default>
+        <klever_duplicate_order>
+            <general>
+                <enabled>1</enabled>
+                <time_window>30</time_window>
+                <check_payment_method>1</check_payment_method>
+                <check_grand_total>1</check_grand_total>
+                <check_customer_email>1</check_customer_email>
+                <error_message>You have already placed a similar order recently. Please wait before placing another order or contact support if you need assistance.</error_message>
+            </general>
+        </klever_duplicate_order>
+    </default>
+</config>

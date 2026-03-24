@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Klever Tech Solution
+ * Duplicate Order Prevention Module
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="klever" translate="label" sortOrder="500">
+            <label>Klever Tech Solution</label>
+        </tab>
+        <section id="klever_duplicate_order" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Duplicate Order Prevention</label>
+            <tab>klever</tab>
+            <resource>Klever_DuplicateOrderPrevention::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable or disable duplicate order prevention.</comment>
+                </field>
+                <field id="time_window" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Time Window (minutes)</label>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <comment>Time period in minutes to check for duplicate orders. Default: 30 minutes.</comment>
+                </field>
+                <field id="check_payment_method" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Check Payment Method</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Include payment method in duplicate check criteria.</comment>
+                </field>
+                <field id="check_grand_total" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Check Grand Total</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Include grand total amount in duplicate check criteria.</comment>
+                </field>
+                <field id="check_customer_email" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Check Customer Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Include customer email in duplicate check criteria.</comment>
+                </field>
+                <field id="error_message" translate="label comment" type="textarea" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Error Message</label>
+                    <comment>Custom error message shown to customers when duplicate order is detected.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

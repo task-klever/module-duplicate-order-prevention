@@ -1,0 +1,28 @@
+{
+    "name": "klever/module-duplicate-order-prevention",
+    "description": "Prevents duplicate orders with same customer email, payment method and grand total within a configurable time window",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Klever Tech Solution",
+            "email": "info@klevertech.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "magento/framework": "*",
+        "magento/module-sales": "*",
+        "magento/module-quote": "*",
+        "magento/module-checkout": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Klever\\DuplicateOrderPrevention\\": ""
+        }
+    }
+}

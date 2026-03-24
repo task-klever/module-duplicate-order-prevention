@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Klever Tech Solution
+ * Duplicate Order Prevention Module
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\PaymentInformationManagement">
+        <plugin name="klever_prevent_duplicate_order"
+                type="Klever\DuplicateOrderPrevention\Plugin\PreventDuplicateOrder"
+                sortOrder="10"/>
+    </type>
+    <type name="Magento\Checkout\Model\GuestPaymentInformationManagement">
+        <plugin name="klever_prevent_duplicate_order_guest"
+                type="Klever\DuplicateOrderPrevention\Plugin\PreventDuplicateOrderGuest"
+                sortOrder="10"/>
+    </type>
+</config>
