@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Klever\DuplicateOrderPrevention\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
@@ -88,10 +89,26 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Get error message with order increment ID placeholder support
-     * Use %1 in the message as placeholder for order increment ID
+     * Get order view URL for logged-in customer
      */
-    public function getErrorMessage(?string $incrementId = null, ?int $storeId = null): string
+    public function getCustomerOrderUrl(int $orderId): string
+    {
+        return $this->_urlBuilder->getUrl('sales/order/view', ['order_id' => $orderId]);
+    }
+
+    /**
+     * Get guest order lookup URL (Orders and Returns page)
+     */
+    public function getGuestOrderUrl(): string
+    {
+        return $this->_urlBuilder->getUrl('sales/guest/form');
+    }
+
+    /**
+     * Get error message with order increment ID and URL placeholder support
+     * Use %1 for order increment ID and %2 for order URL
+     */
+    public function getErrorMessage(?string $incrementId = null, ?string $orderUrl = null, ?int $storeId = null): string
     {
         $message = $this->scopeConfig->getValue(
             self::XML_PATH_ERROR_MESSAGE,
@@ -100,11 +117,15 @@ class Data extends AbstractHelper
         );
 
         if (empty($message)) {
-            $message = 'You have an incomplete order #%1. Please try completing it with a different payment method instead of placing a new order.';
+            $message = 'You have an incomplete order <a href="%2">#%1</a>. Please try completing it with a different payment method instead of placing a new order.';
         }
 
         if ($incrementId) {
             $message = str_replace('%1', $incrementId, $message);
+        }
+
+        if ($orderUrl) {
+            $message = str_replace('%2', $orderUrl, $message);
         }
 
         return $message;

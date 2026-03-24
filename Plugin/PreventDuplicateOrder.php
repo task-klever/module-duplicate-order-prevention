@@ -80,6 +80,7 @@ class PreventDuplicateOrder
 
             if ($incompleteOrder) {
                 $incrementId = $incompleteOrder->getIncrementId();
+                $orderUrl = $this->helper->getCustomerOrderUrl((int)$incompleteOrder->getId());
                 $this->logger->info(
                     'Klever_DuplicateOrderPrevention: Incomplete order found, prompting customer to complete it',
                     [
@@ -89,7 +90,7 @@ class PreventDuplicateOrder
                     ]
                 );
                 throw new LocalizedException(
-                    __($this->helper->getErrorMessage($incrementId))
+                    __($this->helper->getErrorMessage($incrementId, $orderUrl))
                 );
             }
         } catch (LocalizedException $e) {

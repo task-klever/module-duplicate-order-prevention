@@ -15,7 +15,7 @@
                 <check_grand_total>1</check_grand_total>
                 <check_customer_email>1</check_customer_email>
                 <order_statuses>canceled,closed,payment_review,pending_payment</order_statuses>
-                <error_message>You have an incomplete order #%1. Please try completing it with a different payment method instead of placing a new order.</error_message>
+                <error_message><![CDATA[You have an incomplete order <a href="%2">#%1</a>. Please try completing it with a different payment method instead of placing a new order.]]></error_message>
             </general>
         </klever_duplicate_order>
     </default>

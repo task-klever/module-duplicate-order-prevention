@@ -45,7 +45,7 @@
                 </field>
                 <field id="error_message" translate="label comment" type="textarea" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Customer Message</label>
-                    <comment><![CDATA[Message shown when an incomplete order is found. Use <strong>%1</strong> as placeholder for the order number.]]></comment>
+                    <comment><![CDATA[Message shown when an incomplete order is found. Use <strong>%1</strong> for order number and <strong>%2</strong> for order link URL.]]></comment>
                 </field>
             </group>
         </section>

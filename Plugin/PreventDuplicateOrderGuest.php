@@ -81,6 +81,7 @@ class PreventDuplicateOrderGuest
 
             if ($incompleteOrder) {
                 $incrementId = $incompleteOrder->getIncrementId();
+                $orderUrl = $this->helper->getGuestOrderUrl();
                 $this->logger->info(
                     'Klever_DuplicateOrderPrevention: Incomplete guest order found, prompting customer to complete it',
                     [
@@ -90,7 +91,7 @@ class PreventDuplicateOrderGuest
                     ]
                 );
                 throw new LocalizedException(
-                    __($this->helper->getErrorMessage($incrementId))
+                    __($this->helper->getErrorMessage($incrementId, $orderUrl))
                 );
             }
         } catch (LocalizedException $e) {
